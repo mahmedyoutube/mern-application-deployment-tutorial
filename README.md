@@ -7,5 +7,9 @@ Technogloies used in it
 
 
 #### PROJECT SETUP
-replace MONGODB_URI (backend/.env) with your URI
+No need to setup anything just put command and you are good to go
+
+```bash
+docker-compose -f docker-compose.dev.yml up --build
+```
 
