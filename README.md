@@ -10,8 +10,9 @@ Technogloies used in it
 replace MONGODB_URI (backend/.env) with your URI                                                                                                                      
 
 ##### Branches information
-There are many branches are present.                                                                                                                      
-1- docker-for-development ( show how to setup docker in localhost with hot-reloading enable)
+There are many branches are present.
+1- master (basic project setup without docker)
+2- docker-for-development ( show how to setup docker in development environment)
 
 
 
