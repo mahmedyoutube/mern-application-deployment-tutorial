@@ -1,50 +1,68 @@
+# docker compose file version
 version: '3'
+
+# all of your services list will define here
 services: 
-    mongoDb:
-        image: mongo
-        restart: always
-        environment:
+
+    mongoDb: #serviceName
+        image: mongo #get mongoDb latest image from hub.docker.com
+        restart: always  # our services will runs continuously and will not stop until we stop this
+        environment: # initialize mongoDb with ROOT username and password
           - MONGO_INITDB_ROOT_USERNAME=root
           - MONGO_INITDB_ROOT_PASSWORD=example
-        
+        # in docker evironment, data is not persistant, so we used volumes to persist data
+        # volumes are managed by docker and it is a persistant storage
         volumes: 
             - db-volume:/data/db  
 
-    # mongo-experss is an option you can skip this if you want
-
+    # mongo-experss is an optional, you can skip this if you want
     mongo-express:
         image: mongo-express
         restart: always
+        # Services which is running inside the docker environment cannot access it outside the docker environment, 
+        # so in order to access outside the docker enironemnt
+        # we need to expose our service port to outside the environment and map its port with outside environment
+        # example, we can access mongo-express outside the docker-environemnt by entering this url on browser localhost:8081
+        # because 8081 port is mapped with services port 8081 which is running inside the container
+        # you can change it to 8080:8081, now you need to enter localhost:8080 because you map 8081 port with 8080
         ports:
           - 8081:8081
         environment:
           ME_CONFIG_MONGODB_ADMINUSERNAME: root
-          ME_CONFIG_MONGODB_ADMINPASSWORD: example
+          ME_CONFIG_MONGODB_ADMINPASSWORD: example 
+        # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
+        # container service name and port on which it is running
           ME_CONFIG_MONGODB_URL: mongodb://root:example@mongoDb:27017/
+      
+        
 
     backend:   
-        build:
-            context: ./backend
-            dockerfile: Dockerfile.dev
+        build: # build image
+            context: ./backend #directory location
+            dockerfile: Dockerfile.dev # dockerfile name
         volumes: 
             - /app/node_modules
             - ./backend:/app    
         environment: 
+             # this url mean, when you want to connect to other container inside the container without exposing the port, you need other 
+             # container service name and port on which it is running
             - MONGODB_URI=MONGODB_URI=mongodb://root:example@mongoDb:27017/dockerizingMernApplicationTestDB?authSource=admin
-            - CHOKIDAR_USEPOLLING=true
-        depends_on: 
+            - CHOKIDAR_USEPOLLING=true #for hot reloading
+           
+        depends_on:  # don't run untill mongoDb service will not start 
             - mongoDb   
         restart: always    
 
     frontend:   
-        build:
+        build: 
             context: ./frontend
             dockerfile: Dockerfile.dev
         volumes: 
-            - /app/node_modules
-            - ./frontend:/app    
-        #request will forward to same url, so we only need /api to distinguish that this request will forward to our backend           
+            - /app/node_modules # we reference the node_modules which is present in app directory inside the docker, to our current node modules which is present in front directory
+            - ./frontend:/app  # frontend directory is used as a volume(bind mount)  
+             
         environment: 
+            #request will forward to same url, so we only need /api so our nginx distinguish that this request will forward to our backend    
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
     
@@ -56,5 +74,6 @@ services:
             - 3000:80
         restart: always
 
+        # volumes are defined here
 volumes: 
     db-volume:        
