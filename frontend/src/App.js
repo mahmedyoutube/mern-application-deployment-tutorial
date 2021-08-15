@@ -14,7 +14,10 @@ function App() {
   const [allUsers, setAllUsers] = useState([]);
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-  console.log("backendUrl ", process.env.REACT_APP_BACKEND_URL);
+  console.log(
+    "backendUrl ",
+    process.env.REACT_APP_BACKEND_URL
+  );
 
   const loadAllUsers = useCallback(async () => {
     try {
