@@ -47,7 +47,7 @@ services:
             - REACT_APP_BACKEND_URL=/api
             - CHOKIDAR_USEPOLLING=true
     
-     nginx:
+    nginx:
         image: linuxserver/swag
         ports:
             - 80:80
